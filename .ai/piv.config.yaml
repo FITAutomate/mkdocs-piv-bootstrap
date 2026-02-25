@@ -1,0 +1,24 @@
+﻿version: 1
+project: fit-docs
+platform: windows-first
+
+paths:
+  venv: .\venv
+  mkdocs_exe: .\venv\Scripts\mkdocs.exe
+  python_exe: .\venv\Scripts\python.exe
+
+validation:
+  preferred:
+    when: venv_exists
+    command: .\venv\Scripts\mkdocs.exe build --strict
+  bootstrap_if_missing_venv:
+    - py -3.14 -m venv .\venv
+    - .\venv\Scripts\python.exe -m pip install --upgrade pip
+    - .\venv\Scripts\python.exe -m pip install mkdocs mkdocs-material
+    - .\venv\Scripts\mkdocs.exe build --strict
+
+commands:
+  prime_init: python .ai/scripts/prime.py --init
+  prime_check: python .ai/scripts/prime.py --check
+  piv_new: python .ai/scripts/piv.py new <slug>
+  piv_validate: python .ai/scripts/piv.py validate

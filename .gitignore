@@ -1,0 +1,10 @@
+﻿# Python and MkDocs artifacts
+venv/
+site/
+__pycache__/
+*.pyc
+.run/
+
+# OS/editor
+.DS_Store
+Thumbs.db

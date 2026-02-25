@@ -1,0 +1,55 @@
+﻿name: PIV Feature Request
+description: Request a new feature workflow using PRP + validation loop.
+title: "feat: <short feature title>"
+labels:
+  - enhancement
+body:
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal / Overview
+      description: What outcome is required?
+    validations:
+      required: true
+
+  - type: textarea
+    id: when_to_use
+    attributes:
+      label: When to use
+      description: Operational context for this feature.
+    validations:
+      required: true
+
+  - type: textarea
+    id: prereqs
+    attributes:
+      label: Prereqs
+      description: Dependencies, systems, credentials assumptions (no secrets).
+    validations:
+      required: true
+
+  - type: textarea
+    id: procedure
+    attributes:
+      label: Procedure
+      description: Implementation steps.
+    validations:
+      required: true
+
+  - type: textarea
+    id: troubleshooting
+    attributes:
+      label: Troubleshooting / Resources
+      description: Risks, edge cases, and links.
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: compliance
+    attributes:
+      label: Repository compliance
+      options:
+        - label: I will run strict build validation before requesting merge.
+          required: true
+        - label: I will keep changes scoped to intended directories.
+          required: true
