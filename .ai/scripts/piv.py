@@ -8,6 +8,9 @@ import subprocess
 import sys
 
 
+LOCAL_TEST_URL = "http://127.0.0.1:8001/"
+
+
 def repo_root() -> Path:
     return Path(__file__).resolve().parents[2]
 
@@ -67,7 +70,13 @@ def ensure_venv_and_deps(root: Path) -> list[str]:
     return log
 
 
-def write_validation_report(root: Path, passed: bool, lines: list[str]) -> Path:
+def write_validation_report(
+    root: Path,
+    passed: bool,
+    lines: list[str],
+    refresh_status: str = "N/A",
+    local_test_url: str = LOCAL_TEST_URL,
+) -> Path:
     reports_dir = root / ".ai" / "reports"
     reports_dir.mkdir(parents=True, exist_ok=True)
     stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
@@ -80,6 +89,8 @@ def write_validation_report(root: Path, passed: bool, lines: list[str]) -> Path:
         f"- Timestamp: {datetime.now().isoformat(timespec='seconds')}",
         f"- Result: {result}",
         f"- Strict Build: {result}",
+        f"- Preview Refresh: {refresh_status}",
+        f"- Local Test URL: {local_test_url}",
         "",
         "## Command Log",
         "",
@@ -90,6 +101,46 @@ def write_validation_report(root: Path, passed: bool, lines: list[str]) -> Path:
     ]
     path.write_text("\n".join(content), encoding="utf-8")
     return path
+
+
+def run_preview_refresh(root: Path) -> tuple[str, list[str]]:
+    lines: list[str] = []
+    script = root / "start-docs.ps1"
+    if not script.exists():
+        lines.append("REFRESH_SKIPPED: start-docs.ps1 not found")
+        lines.append(f"LOCAL_TEST_URL: {LOCAL_TEST_URL}")
+        return "SKIPPED", lines
+
+    cmd = [
+        "powershell",
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        str(script),
+        "-Port",
+        "8001",
+    ]
+    proc = run(cmd, root)
+    lines.append(f"$ {' '.join(cmd)}")
+    if proc.stdout:
+        lines.append(proc.stdout.strip())
+    if proc.stderr:
+        lines.append(proc.stderr.strip())
+
+    combined = f"{proc.stdout}\n{proc.stderr}"
+    if proc.returncode == 0:
+        lines.append(f"LOCAL_TEST_URL: {LOCAL_TEST_URL}")
+        return "PASS", lines
+
+    if "Port 8001 is already in use" in combined:
+        lines.append("REFRESH_NOTE: Port 8001 already in use; using existing local preview process.")
+        lines.append(f"LOCAL_TEST_URL: {LOCAL_TEST_URL}")
+        return "PASS_ALREADY_RUNNING", lines
+
+    lines.append("REFRESH_WARN: Failed to start local preview refresh command.")
+    lines.append(f"LOCAL_TEST_URL: {LOCAL_TEST_URL}")
+    return "WARN", lines
 
 
 def cmd_new(root: Path, slug: str) -> int:
@@ -135,6 +186,7 @@ def cmd_new(root: Path, slug: str) -> int:
 
 def cmd_validate(root: Path) -> int:
     log: list[str] = []
+    refresh_status = "N/A"
     try:
         log.extend(ensure_venv_and_deps(root))
 
@@ -147,13 +199,20 @@ def cmd_validate(root: Path) -> int:
             log.append(build.stderr.strip())
 
         passed = build.returncode == 0
-        report = write_validation_report(root, passed, log)
+        if passed:
+            refresh_status, refresh_log = run_preview_refresh(root)
+            log.extend(refresh_log)
+
+        report = write_validation_report(root, passed, log, refresh_status=refresh_status)
         print(f"VALIDATION_REPORT: {report}")
         print(f"RESULT: {'PASS' if passed else 'FAIL'}")
+        if passed:
+            print(f"PREVIEW_REFRESH: {refresh_status}")
+            print(f"LOCAL_TEST_URL: {LOCAL_TEST_URL}")
         return 0 if passed else 1
     except Exception as exc:
         log.append(str(exc))
-        report = write_validation_report(root, False, log)
+        report = write_validation_report(root, False, log, refresh_status="FAIL")
         print(f"VALIDATION_REPORT: {report}")
         print("RESULT: FAIL")
         print(str(exc), file=sys.stderr)

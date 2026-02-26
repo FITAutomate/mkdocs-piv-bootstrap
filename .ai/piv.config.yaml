@@ -11,11 +11,14 @@ validation:
   preferred:
     when: venv_exists
     command: .\venv\Scripts\mkdocs.exe build --strict
+    post_strict_refresh: .\start-docs.ps1 -Port 8001
+    local_test_url: http://127.0.0.1:8001/
   bootstrap_if_missing_venv:
     - py -3.14 -m venv .\venv
     - .\venv\Scripts\python.exe -m pip install --upgrade pip
     - .\venv\Scripts\python.exe -m pip install mkdocs mkdocs-material
     - .\venv\Scripts\mkdocs.exe build --strict
+    - .\start-docs.ps1 -Port 8001
 
 commands:
   prime_init: python .ai/scripts/prime.py --init

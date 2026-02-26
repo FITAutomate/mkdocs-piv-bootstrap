@@ -1,0 +1,25 @@
+﻿/* Starter visual tokens (review and tune before launch) */
+:root > * {
+  --fit-blue: #007CE8;
+  --fit-blue-deep: #00449B;
+  --fit-green: #1CD000;
+  --fit-ink: #00003D;
+  --fit-paper: #F3F4F7;
+
+  --md-default-bg-color: var(--fit-paper);
+  --md-default-fg-color: var(--fit-ink);
+  --md-typeset-color: var(--fit-ink);
+  --md-typeset-a-color: var(--fit-blue);
+  --md-primary-fg-color: var(--fit-blue);
+  --md-primary-bg-color: var(--fit-paper);
+  --md-accent-fg-color: var(--fit-green);
+}
+
+[data-md-color-scheme="slate"] {
+  --md-default-bg-color: var(--fit-blue-deep);
+  --md-default-fg-color: var(--fit-paper);
+  --md-typeset-color: var(--fit-paper);
+  --md-typeset-a-color: var(--fit-green);
+  --md-primary-fg-color: color-mix(in oklab, var(--fit-ink) 90%, var(--fit-paper));
+  --md-primary-bg-color: var(--fit-blue);
+}

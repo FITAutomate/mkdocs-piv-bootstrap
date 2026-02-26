@@ -13,6 +13,8 @@
 ## Validation Gate
 - Always run validation before claiming done.
 - Repository release gate is strict build: `.\venv\Scripts\mkdocs.exe build --strict`.
+- After strict PASS, refresh local preview with `.\start-docs.ps1 -Port 8001`.
+- Share local test link: `http://127.0.0.1:8001/`.
 
 ## Local Commands (Windows)
 1. Create virtual environment:

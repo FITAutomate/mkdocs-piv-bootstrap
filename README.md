@@ -39,6 +39,9 @@ This template packages the working patterns proven in `FITAutomate/fit-docs` PRs
 ### Dependency + reference docs
 
 - `requirements.txt`
+- `mkdocs.yml` (starter baseline)
+- `docs/stylesheets/extra.css` (starter tokens)
+- `docs/stylesheets/blog-index.css` (starter placeholder)
 - `docs/project/AI PIV Loop (Template).md`
 
 ## Provenance: Source PRs (fit-docs)
@@ -65,9 +68,11 @@ Links:
 
 Use this repository as a GitHub template and create a new repository from it.
 
-Then add your MkDocs project content:
+Then review starter config and add your MkDocs project content:
 
 - `mkdocs.yml`
+- `docs/stylesheets/extra.css`
+- `docs/stylesheets/blog-index.css`
 - `docs/` pages and folders
 - optional hooks/overrides/assets
 
@@ -147,6 +152,9 @@ Before first production use, update:
    - Confirm local commands and validation sequence
 4. `docs/project/AI PIV Loop (Template).md`
    - Replace org-specific references
+5. `mkdocs.yml` and stylesheets
+   - Review palette, features, extensions, and plugin set
+   - Tune `docs/stylesheets/extra.css` and `docs/stylesheets/blog-index.css` before launch
 
 ## Security Guardrails
 
@@ -172,6 +180,11 @@ Before first production use, update:
 - Run:
   - `.\venv\Scripts\python.exe .ai/scripts/prime.py --init`
 - Re-run check and commit missing scaffold files.
+
+### `piv.py validate` reports preview refresh skipped
+
+- This template may not include `start-docs.ps1` in every target repo.
+- Strict build validation still runs; add your own local preview start script if desired.
 
 ## Minimal Adoption Command Set (Windows)
 

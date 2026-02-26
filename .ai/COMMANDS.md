@@ -15,6 +15,10 @@
 ## Manual Validation
 - Strict build gate:
   `.\venv\Scripts\mkdocs.exe build --strict`
+- Refresh local preview after strict PASS:
+  `.\start-docs.ps1 -Port 8001`
+- Local testing URL:
+  `http://127.0.0.1:8001/`
 
 ## Git + PR
 - Create branch:
